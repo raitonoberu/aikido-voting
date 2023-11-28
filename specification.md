@@ -17,7 +17,7 @@ Response body:
 ```json
 {
 	"id": 1,
-	"tokem": "qwertyqwertyqwertyqwerty",
+	"token": "qwertyqwertyqwertyqwerty",
 }
 ```
 
@@ -46,11 +46,11 @@ Response body:
 ```json
 {
 	"id": 1,
-	"tokem": "qwertyqwertyqwertyqwerty",
+	"token": "qwertyqwertyqwertyqwerty",
 }
 ```
 
-- **PATCH** `/user/{id}` - обновить информацию о пользователе.
+- **PATCH** `/user` - обновить информацию о пользователе.
 
 Request body:
 ```json
@@ -60,7 +60,7 @@ Request body:
 }
 ```
 
-- **DELETE** `/user/{id}` - удалить пользователя.
+- **DELETE** `/user` - удалить пользователя.
 
 ## Pool
 
