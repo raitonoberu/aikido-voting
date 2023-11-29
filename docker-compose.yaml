@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  web:
+    container_name: webapp
+    build: .
+    depends_on:
+      - db
+    environment:
+      GIN_MODE: release
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      SECRET: ${SECRET}
+    ports:
+      - "8080:8080"
+    networks:
+      - bridge
+    restart: always
+    cap_add:
+      - NET_RAW
+    # volumes:
+    #   - content:/content
+
+  db:
+    container_name: postgres
+    image: docker.io/postgres:alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: aikido-db
+    ports:
+      - "5432:5432"
+    networks:
+      - bridge
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    cap_add:
+      - NET_RAW
+    volumes:
+      - postgres:/var/lib/postgresql/data
+  # pgadmin:
+  #   container_name: pgadmin
+  #   image: dpage/pgadmin4
+  #   depends_on:
+  #     - db
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+  #     PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+  #     PGADMIN_LISTEN_PORT: 8080
+  #   ports:
+  #     - "8080:8080"
+  #   restart: always
+  #   volumes:
+  #     - pgadmin:/var/lib/pgadmin
+    
+networks:
+  bridge:
+    driver: bridge
+
+volumes:
+  postgres:
+  # pgadmin:
+  # content:
