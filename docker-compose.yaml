@@ -13,7 +13,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       SECRET: ${SECRET}
     ports:
-      - "8080:8080"
+      - "80:8080"
     networks:
       - bridge
     restart: always
