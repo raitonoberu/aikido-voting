@@ -9,7 +9,7 @@ Request body:
 ```json
 {
 	"email": "lussypicker@mail.ru",
-	"fullname": "Фамилия Имя Отчество",
+	"name": "Фамилия Имя Отчество",
 	"password": "deadinside69",
 }
 ```
@@ -27,7 +27,7 @@ Response body:
 ```json
 {
 	"id": 1,
-	"fullname": "Фамилия Имя Отчество",
+	"name": "Фамилия Имя Отчество",
 	"email": "lussypicker@mail.ru",
 }
 ```
@@ -55,7 +55,7 @@ Response body:
 Request body:
 ```json
 {
-	"fullname": "Фамилия Имя Отчество",
+	"name": "Фамилия Имя Отчество",
 	"email": "lussypicker@mail.ru",
 }
 ```
@@ -98,10 +98,10 @@ Response body:
 		"id": 1,
 		"name": "Название опроса",
 		"description": "Описание опроса",
-		"author": {
+		"user": {
 			"id": 1,
 			"email": "lussypicker@mail.ru",
-			"fullname": "Фамилия Имя Отчество",
+			"name": "Фамилия Имя Отчество",
 		},
 		"is_anonymous": false,
 		"options": [
@@ -123,10 +123,10 @@ Response body:
 	"id": 1,
 	"name": "Название опроса",
 	"description": "Описание опроса",
-	"author": {
+	"user": {
 		"id": 1,
 		"email": "lussypicker@mail.ru",
-		"fullname": "Фамилия Имя Отчество",
+		"name": "Фамилия Имя Отчество",
 	},
 	"is_anonymous": false,
 	"options": [
@@ -168,10 +168,10 @@ Response body:
 [
 	{
 		"id": 1,
-		"author": {
+		"user": {
 			"id": 1,
 			"email": "lussypicker@mail.ru",
-			"fullname": "Фамилия Имя Отчество",
+			"name": "Фамилия Имя Отчество",
 		},
 		"text": "Текст комментария",
 		"created_at": "2023-11-23T13:19:46Z",
