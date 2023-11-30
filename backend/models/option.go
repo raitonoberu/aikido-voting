@@ -8,5 +8,6 @@ type Option struct {
 	ID     int64  `json:"id" bun:",pk,autoincrement"`
 	PoolID int64  `json:"-"`
 	Text   string `json:"text"`
-	Count  int64  `json:"count"` // TODO
+
+	Count int64 `json:"count" bun:"-"`
 }

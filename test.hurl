@@ -129,6 +129,8 @@ jsonpath "$['options'][1]['id']" != null
 jsonpath "$['options'][1]['count']" == 0
 jsonpath "$['created_at']" != null
 jsonpath "$['expires_at']" != null
+[Captures]
+option_id: jsonpath "$['options'][0]['id']"
 
 
 ## Delete pool
@@ -148,9 +150,42 @@ Authorization: Bearer {{token}}
 
 HTTP 200
 [Captures]
-pool_id: jsonpath "$['id']"
+pool_id_temp: jsonpath "$['id']"
 
-DELETE http://localhost:8080/api/pool/{{pool_id}}
+DELETE http://localhost:8080/api/pool/{{pool_id_temp}}
 Authorization: Bearer {{token}}
 
 HTTP 200
+
+
+# -- VOTE --
+
+## Create vote
+POST http://localhost:8080/api/pool/{{pool_id}}/vote
+Authorization: Bearer {{token}}
+{
+	"id": {{option_id}}
+}
+
+HTTP 200
+
+# GET http://localhost:8080/api/pool/{{pool_id}}
+# Authorization: Bearer {{token}}
+
+# HTTP 200
+# [Asserts]
+# jsonpath "$['options'][0]['count']" == 1
+
+
+## Delete vote
+DELETE http://localhost:8080/api/pool/{{pool_id}}/vote
+Authorization: Bearer {{token}}
+
+HTTP 200
+
+# GET http://localhost:8080/api/pool/{{pool_id}}
+# Authorization: Bearer {{token}}
+
+# HTTP 200
+# [Asserts]
+# jsonpath "$['options'][0]['count']" == 0
