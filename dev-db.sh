@@ -8,4 +8,5 @@ podman run --name postgres-dev \
   -e POSTGRES_DB=aikido-db-dev \
   -p 5432:5432 \
   --cap-add NET_RAW \
+  --rm \
   docker.io/postgres:alpine
