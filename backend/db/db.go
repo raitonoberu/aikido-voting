@@ -32,6 +32,7 @@ func connect() *bun.DB {
 	)
 	if os.Getenv("ENV") == "dev" {
 		dbConnector.Config().Addr = "localhost:5432"
+		dbConnector.Config().Database = "aikido-db-dev"
 	}
 
 	return bun.NewDB(sql.OpenDB(dbConnector), pgdialect.New())
