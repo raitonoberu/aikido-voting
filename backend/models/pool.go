@@ -100,6 +100,8 @@ func (m PoolModel) Available(ctx context.Context, userID int64) ([]*Pool, error)
 	err = db.GetDB().NewSelect().
 		Model(&pool).
 		Where("group_id in (?)", bun.In(groupIDs)).
+		Relation("User").
+		Relation("Options").
 		Scan(ctx)
 	return pool, err
 }
