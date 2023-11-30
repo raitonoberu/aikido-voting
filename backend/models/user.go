@@ -136,6 +136,43 @@ func (m UserModel) Get(ctx context.Context, id int64) (*User, error) {
 	return user, err
 }
 
+func (m UserModel) Update(ctx context.Context, userID int64, form forms.UpdateUserForm) error {
+	query := db.GetDB().NewUpdate().
+		Model((*User)(nil)).
+		Where("id = ?", userID)
+
+	if form.Password != "" {
+		// TODO: logout all other sessions?
+		hashedPassword, err := bcrypt.GenerateFromPassword(
+			[]byte(form.Password), bcrypt.DefaultCost,
+		)
+		if err != nil {
+			return err
+		}
+		query = query.Set("password = ?", string(hashedPassword))
+	}
+	if form.Email != "" {
+		// check if email already exists
+		checkUser, err := db.GetDB().NewSelect().
+			Model((*User)(nil)).
+			Where("email = LOWER(?)", form.Email).
+			Count(ctx)
+		if err != nil {
+			return err
+		}
+		if checkUser > 0 {
+			return errors.New("email already exists")
+		}
+		query = query.Set("email = ?", form.Email)
+	}
+	if form.Name != "" {
+		query = query.Set("name = ?", form.Name)
+	}
+
+	_, err := query.Exec(ctx)
+	return err
+}
+
 func (m UserModel) Delete(ctx context.Context, id int64) error {
 	tx, err := db.GetDB().Begin()
 	if err != nil {

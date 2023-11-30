@@ -55,6 +55,6 @@ func ValidateName(fl validator.FieldLevel) bool {
 	name := space.ReplaceAllString(fl.Field().String(), " ")
 	name = strings.TrimSpace(name)
 
-	matched, _ := regexp.MatchString(`^[^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;'"|=.,0123456789]{3,20}$`, name)
+	matched, _ := regexp.MatchString(`^[^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;'"|=.,0123456789]{3,50}$`, name)
 	return matched
 }

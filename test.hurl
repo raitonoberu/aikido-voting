@@ -38,19 +38,35 @@ jsonpath "$['name']" == "Фамилия Имя Отчество"
 jsonpath "$['email']" == "{{email}}"
 
 
-## Update user (TODO)
-# PATCH http://localhost:8080/api/user/{{user_id}}
-# Authorization: Bearer {{token}}
-# {
-#     "name": "Другое Фамилия Имя Отчество",
-#     "email": "sickducker@mail.ru"
-# }
+## Update user
+PATCH http://localhost:8080/api/user
+Authorization: Bearer {{token}}
+{
+    "name": "Другое Фамилия Имя Отчество",
+    "email": "new{{email}}",
+	"password": "notdeadinsideanymore69"
+}
 
-# HTTP 200
-# [Asserts]
-# jsonpath "$['id']" == {{user_id}}
-# jsonpath "$['name']" == "Другое Фамилия Имя Отчество"
-# jsonpath "$['email']" == "sickducker@mail.ru"
+HTTP 200
+
+GET http://localhost:8080/api/user/{{user_id}}
+Authorization: Bearer {{token}}
+
+HTTP 200
+[Asserts]
+jsonpath "$['name']" == "Другое Фамилия Имя Отчество"
+jsonpath "$['email']" == "new{{email}}"
+
+POST http://localhost:8080/api/user/login
+{
+	"email": "new{{email}}",
+	"password": "notdeadinsideanymore69"
+}
+
+HTTP 200
+[Asserts]
+jsonpath "$['id']" == {{user_id}}
+jsonpath "$['token']" != null
 
 
 ## Delete user

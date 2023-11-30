@@ -73,6 +73,25 @@ func (c *UserController) Get(ctx *gin.Context) {
 	ctx.JSON(200, user)
 }
 
+func (c *UserController) Update(ctx *gin.Context) {
+	var form forms.UpdateUserForm
+	if err := ctx.ShouldBind(&form); err != nil {
+		msg := userForm.Update(err)
+		log.Println(err)
+		ctx.AbortWithStatusJSON(400, gin.H{"error": msg})
+		return
+	}
+
+	err := userModel.Update(ctx, getUserID(ctx), form)
+	if err != nil {
+		log.Println(err)
+		ctx.AbortWithStatusJSON(500, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.Status(200)
+}
+
 func (c *UserController) Delete(ctx *gin.Context) {
 	err := userModel.Delete(ctx, getUserID(ctx))
 	if err != nil {

@@ -30,7 +30,7 @@ func main() {
 	api.POST("/user", user.Register)
 	api.POST("/user/login", user.Login)
 	api.GET("/user/:id", auth.Middleware, user.Get)
-	// api.PATCH("/user", auth.Middleware, user.Update)
+	api.PATCH("/user", auth.Middleware, user.Update)
 	api.DELETE("/user", auth.Middleware, user.Delete)
 
 	// pool
