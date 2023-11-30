@@ -57,6 +57,7 @@ Request body:
 {
 	"name": "Фамилия Имя Отчество",
 	"email": "lussypicker@mail.ru",
+	"password": "newPassword",
 }
 ```
 
