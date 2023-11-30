@@ -21,7 +21,10 @@ func main() {
 	// api
 	r := gin.Default()
 	api := r.Group("/api")
-	api.Use(CORSMiddleware)
+
+	// cors
+	cors := new(controllers.CorsController)
+	api.Use(cors.Middleware)
 
 	// auth
 	auth := new(controllers.AuthController)
@@ -42,18 +45,4 @@ func main() {
 	api.DELETE("/pool/:id", auth.Middleware, pool.Delete)
 
 	panic(r.Run(":8080"))
-}
-
-func CORSMiddleware(c *gin.Context) {
-	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-	c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
-	c.Writer.Header().Set("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PATCH, DELETE")
-
-	if c.Request.Method == "OPTIONS" {
-		c.AbortWithStatus(204)
-		return
-	}
-
-	c.Next()
 }
