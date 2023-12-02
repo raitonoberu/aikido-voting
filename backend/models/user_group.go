@@ -3,6 +3,7 @@ package models
 import (
 	"aikido/db"
 	"context"
+	"errors"
 
 	"github.com/uptrace/bun"
 )
@@ -20,16 +21,34 @@ type UserGroup struct {
 type UserGroupModel struct{}
 
 func (m UserGroupModel) Add(ctx context.Context, userID, groupID int64) error {
-	_, err := db.GetDB().NewInsert().
-		Model(&UserGroup{
-			UserID:  userID,
-			GroupID: groupID,
-		}).
+	// TODO: limit to admin only
+	db := db.GetDB()
+
+	// check if group exists
+	groupExists, err := db.NewSelect().
+		Model((*Group)(nil)).
+		Where("id = ?", groupID).
+		Exists(ctx)
+	if err != nil {
+		return err
+	}
+	if !groupExists {
+		return errors.New("group doesn't exist")
+	}
+
+	// insert userGroup
+	userGroup := &UserGroup{
+		UserID:  userID,
+		GroupID: groupID,
+	}
+	_, err = db.NewInsert().
+		Model(userGroup).
 		Exec(ctx)
 	return err
 }
 
 func (m UserGroupModel) Remove(ctx context.Context, userID, groupID int64) error {
+	// TODO: limit to admin only
 	_, err := db.GetDB().NewDelete().
 		Model((*UserGroup)(nil)).
 		Where("user_id = ? AND group_id = ?", userID, groupID).

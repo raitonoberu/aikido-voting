@@ -49,5 +49,15 @@ func main() {
 	api.POST("/pool/:id/vote", auth.Middleware, vote.Create)
 	api.DELETE("/pool/:id/vote", auth.Middleware, vote.Delete)
 
+	// group
+	group := new(controllers.GroupController)
+	api.GET("/group", auth.Middleware, group.All)
+	api.POST("/group", auth.Middleware, group.Create)
+	api.PATCH("/group/:id", auth.Middleware, group.Update)
+	api.DELETE("/group/:id", auth.Middleware, group.Delete)
+	api.GET("/group/:id/user", auth.Middleware, group.Users)
+	api.POST("/group/:id/user", auth.Middleware, group.Add)
+	api.DELETE("/group/:id/user/:user_id", auth.Middleware, group.Remove)
+
 	panic(r.Run(":8080"))
 }

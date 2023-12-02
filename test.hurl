@@ -191,3 +191,115 @@ HTTP 200
 [Asserts]
 jsonpath "$['options'][0]['count']" == 0
 jsonpath "$['vote']" == 0
+
+
+# -- GROUP --
+
+## Get all groups
+GET http://localhost:8080/api/group
+Authorization: Bearer {{token}}
+
+HTTP 200
+[Captures]
+groups_count: jsonpath "$" count
+
+
+## Create group
+POST http://localhost:8080/api/group
+Authorization: Bearer {{token}}
+{
+	"name": "My awesome group"
+}
+
+HTTP 200
+[Captures]
+group_id: jsonpath "$['id']"
+
+GET http://localhost:8080/api/group
+Authorization: Bearer {{token}}
+
+HTTP 200
+[Asserts]
+jsonpath "$" count > {{groups_count}}
+
+
+## Update group
+PATCH http://localhost:8080/api/group/{{group_id}}
+Authorization: Bearer {{token}}
+{
+	"name": "My awesomest group"
+}
+
+HTTP 200
+
+
+## Delete group
+POST http://localhost:8080/api/group
+Authorization: Bearer {{token}}
+{
+	"name": "My temp group"
+}
+
+HTTP 200
+[Captures]
+group_id_temp: jsonpath "$['id']"
+
+GET http://localhost:8080/api/group
+Authorization: Bearer {{token}}
+
+HTTP 200
+[Captures]
+groups_count: jsonpath "$" count
+
+DELETE http://localhost:8080/api/group/{{group_id_temp}}
+Authorization: Bearer {{token}}
+
+HTTP 200
+
+GET http://localhost:8080/api/group
+Authorization: Bearer {{token}}
+
+HTTP 200
+[Asserts]
+jsonpath "$" count < {{groups_count}}
+
+
+## Get users in group
+GET http://localhost:8080/api/group/{{group_id}}/user
+Authorization: Bearer {{token}}
+
+HTTP 200
+[Captures]
+users_count: jsonpath "$" count
+
+
+## Add user to group
+POST http://localhost:8080/api/group/{{group_id}}/user
+Authorization: Bearer {{token}}
+{
+	"id": {{user_id}}
+}
+
+HTTP 200
+
+GET http://localhost:8080/api/group/{{group_id}}/user
+Authorization: Bearer {{token}}
+
+HTTP 200
+[Asserts]
+jsonpath "$" count > {{users_count}}
+
+
+## Remove user from group
+
+DELETE http://localhost:8080/api/group/{{group_id}}/user/{{user_id}}
+Authorization: Bearer {{token}}
+
+HTTP 200
+
+GET http://localhost:8080/api/group/{{group_id}}/user
+Authorization: Bearer {{token}}
+
+HTTP 200
+[Asserts]
+jsonpath "$" count == {{users_count}}

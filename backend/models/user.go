@@ -137,6 +137,21 @@ func (m UserModel) Get(ctx context.Context, id int64) (*User, error) {
 	return user, err
 }
 
+func (m UserModel) ByGroup(ctx context.Context, groupID int64) ([]*User, error) {
+	userGroups := []*UserGroup{}
+	err := db.GetDB().NewSelect().
+		Model(&userGroups).
+		Where("group_id = ?", groupID).
+		Relation("User").
+		Scan(ctx)
+
+	users := make([]*User, len(userGroups))
+	for i, userGroup := range userGroups {
+		users[i] = userGroup.User
+	}
+	return users, err
+}
+
 func (m UserModel) Update(ctx context.Context, userID int64, form forms.UpdateUserForm) error {
 	query := db.GetDB().NewUpdate().
 		Model((*User)(nil)).
