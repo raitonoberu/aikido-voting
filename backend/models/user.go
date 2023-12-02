@@ -22,7 +22,7 @@ type User struct {
 	Password string `json:"-"`
 
 	// Role   *Role    `json:"-" bun:"rel:belongs-to,join:role_id=id"`
-	Groups []*Group `json:"-" bun:"m2m:user_groups,join:User=Group"`
+	Groups []*Group `json:"groups,omitempty" bun:"m2m:user_groups,join:User=Group"`
 }
 
 type UserModel struct{}
@@ -104,7 +104,7 @@ func (m UserModel) Register(ctx context.Context, form forms.RegisterForm) (*User
 	// insert default group
 	defaultGroup := &UserGroup{
 		UserID:  user.ID,
-		GroupID: 1,
+		GroupID: 2, // "Все пользователи"
 	}
 	_, err = tx.NewInsert().
 		Model(defaultGroup).
@@ -131,6 +131,7 @@ func (m UserModel) Get(ctx context.Context, id int64) (*User, error) {
 	err := db.GetDB().NewSelect().
 		Model(user).
 		Where("id = ?", id).
+		Relation("Groups").
 		Limit(1).
 		Scan(ctx)
 	return user, err
