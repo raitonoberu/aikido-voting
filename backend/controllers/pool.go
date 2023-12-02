@@ -52,7 +52,7 @@ func (c *PoolController) Get(ctx *gin.Context) {
 		return
 	}
 
-	pool, err := poolModel.Get(ctx, id)
+	pool, err := poolModel.Get(ctx, getUserID(ctx), id)
 	if err != nil {
 		log.Println(err)
 		ctx.AbortWithStatusJSON(500, gin.H{"error": err.Error()})

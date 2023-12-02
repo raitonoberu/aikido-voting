@@ -22,6 +22,8 @@ type Pool struct {
 	CreatedAt   time.Time `json:"created_at"`
 	ExpiresdAt  time.Time `json:"expires_at"`
 
+	Vote int64 `json:"vote" bun:"-"`
+
 	User *User `json:"user" bun:"rel:belongs-to,join:user_id=id"`
 	// Group   *Group    `json:"group" bun:"rel:belongs-to,join:group_id=id"`
 	Options []*Option `json:"options" bun:"rel:has-many,join:id=pool_id"`
@@ -72,7 +74,7 @@ func (m PoolModel) Create(ctx context.Context, userID int64, form forms.CreatePo
 	return pool.ID, tx.Commit()
 }
 
-func (m PoolModel) Get(ctx context.Context, id int64) (*Pool, error) {
+func (m PoolModel) Get(ctx context.Context, userID, id int64) (*Pool, error) {
 	pool := &Pool{}
 	err := db.GetDB().NewSelect().
 		Model(pool).
@@ -81,6 +83,9 @@ func (m PoolModel) Get(ctx context.Context, id int64) (*Pool, error) {
 		Relation("Options").
 		Limit(1).
 		Scan(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	for _, option := range pool.Options {
 		// temporary solution
@@ -93,6 +98,19 @@ func (m PoolModel) Get(ctx context.Context, id int64) (*Pool, error) {
 		}
 		option.Count = count
 	}
+
+	// temporary solution
+	userVote := &Vote{}
+	err = db.GetDB().NewSelect().
+		Model(userVote).
+		Where("pool_id = ? AND user_id = ?", id, userID).
+		Limit(1).
+		Scan(ctx)
+	if err != nil && err != sql.ErrNoRows {
+		return nil, err
+	}
+	pool.Vote = userVote.OptionID
+
 	return pool, err
 }
 
