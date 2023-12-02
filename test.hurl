@@ -175,6 +175,7 @@ Authorization: Bearer {{token}}
 HTTP 200
 [Asserts]
 jsonpath "$['options'][0]['count']" == 1
+jsonpath "$['vote']" == {{option_id}}
 
 
 ## Delete vote
@@ -189,3 +190,4 @@ Authorization: Bearer {{token}}
 HTTP 200
 [Asserts]
 jsonpath "$['options'][0]['count']" == 0
+jsonpath "$['vote']" == 0
