@@ -111,7 +111,7 @@ func (m PoolModel) Get(ctx context.Context, userID, id int64) (*Pool, error) {
 	}
 	pool.Vote = userVote.OptionID
 
-	return pool, err
+	return pool, nil
 }
 
 func (m PoolModel) Available(ctx context.Context, userID int64) ([]*Pool, error) {
