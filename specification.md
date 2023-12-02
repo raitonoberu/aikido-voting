@@ -29,6 +29,13 @@ Response body:
 	"id": 1,
 	"name": "Фамилия Имя Отчество",
 	"email": "lussypicker@mail.ru",
+	"groups": [
+		{
+			"id": 1,
+			"name": "Администраторы",
+		},
+		// ...
+	],
 }
 ```
 
@@ -153,40 +160,112 @@ Request body:
 
 - **DELETE** `/pool/{id}/vote` - отменить голос.
 
-- **POST** `/pool/{id}/comment` - добавить комментарий.
+## Group
 
-Request body:
-```json
-{
-	"text": "Текст комментария",
-}
-```
-
-- **GET** `/pool/{id}/comment` - получить комментарии.
+-- **GET** `/group` - получить все существующие группы.
 
 Response body:
 ```json
 [
 	{
 		"id": 1,
+		"name": "Администраторы",
+	},
+	{
+		"id": 2,
+		"name": "Все пользователи",
+	},
+	{
+		"id": 3,
+		"name": "Группа 1",
+	},
+	// ...
+]
+```
+
+-- **POST** `/group` - создать новую группу. Доступно только администраторам.
+
+Request body:
+```json
+{
+	"name": "Группа 2",
+}
+```
+
+Response body:
+```json
+{
+	"id": 4,
+}
+```
+
+-- **DELETE** `/group/{id}` - удалить группу. Доступно только администраторам.
+
+-- **GET** `/group/{id}/user` - получить всех пользователей в группе.
+
+Response body:
+```json
+[
+	{
+		"id": 1,
+		"name": "Фамилия Имя Отчество",
+		"email": "lussypicker@mail.ru",
+	},
+	// ...
+]
+```
+
+-- **POST** `/group/{id}/user` - добавить пользователя в группу. Доступно только администраторам.
+
+Request body:
+```json
+{
+	"id": 1,
+}
+```
+
+-- **DELETE** `/group/{id}/user/{id}` - удалить пользователя из группы. Доступно только администраторам.
+
+## Chat
+
+- **POST** `/chat/{id}` - отправить сообщение группе.
+
+Request body:
+```json
+{
+	"text": "Текст сообщения",
+}
+```
+
+- **GET** `/chat/{id}?count=25&offset=0` - получить последние сообщения группы.
+
+Request body:
+```json
+[
+	{
+		"text": "Текст сообщения",
 		"user": {
 			"id": 1,
 			"email": "lussypicker@mail.ru",
 			"name": "Фамилия Имя Отчество",
 		},
-		"text": "Текст комментария",
 		"created_at": "2023-11-23T13:19:46Z",
 	},
 	// ...
 ]
 ```
 
-- **DELETE** `/pool/{id}/comment/{id}` - удалить комментарий.
+- **WS** `/chat/{id}/ws` - подписаться на сообщения группы.
 
-# Group
-
-`TODO`
-
-# Role
-
-`TODO`
+Message body:
+```json
+{
+	"text": "Текст сообщения",
+	"user": {
+		"id": 1,
+		"email": "lussypicker@mail.ru",
+		"name": "Фамилия Имя Отчество",
+	},
+	"created_at": "2023-11-23T13:19:46Z",
+}
+```
