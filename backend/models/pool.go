@@ -93,7 +93,7 @@ func (m PoolModel) Get(ctx context.Context, userID, id int64) (*Pool, error) {
 			Model((*Vote)(nil)).
 			Where("pool_id = ? AND option_id = ?", id, option.ID).
 			Count(ctx)
-		if err != nil {
+		if err != nil && err != sql.ErrNoRows {
 			return nil, err
 		}
 		option.Count = count
