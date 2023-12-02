@@ -169,12 +169,12 @@ Authorization: Bearer {{token}}
 
 HTTP 200
 
-# GET http://localhost:8080/api/pool/{{pool_id}}
-# Authorization: Bearer {{token}}
+GET http://localhost:8080/api/pool/{{pool_id}}
+Authorization: Bearer {{token}}
 
-# HTTP 200
-# [Asserts]
-# jsonpath "$['options'][0]['count']" == 1
+HTTP 200
+[Asserts]
+jsonpath "$['options'][0]['count']" == 1
 
 
 ## Delete vote
@@ -183,9 +183,9 @@ Authorization: Bearer {{token}}
 
 HTTP 200
 
-# GET http://localhost:8080/api/pool/{{pool_id}}
-# Authorization: Bearer {{token}}
+GET http://localhost:8080/api/pool/{{pool_id}}
+Authorization: Bearer {{token}}
 
-# HTTP 200
-# [Asserts]
-# jsonpath "$['options'][0]['count']" == 0
+HTTP 200
+[Asserts]
+jsonpath "$['options'][0]['count']" == 0

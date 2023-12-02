@@ -81,6 +81,18 @@ func (m PoolModel) Get(ctx context.Context, id int64) (*Pool, error) {
 		Relation("Options").
 		Limit(1).
 		Scan(ctx)
+
+	for _, option := range pool.Options {
+		// temporary solution
+		count, err := db.GetDB().NewSelect().
+			Model((*Vote)(nil)).
+			Where("pool_id = ? AND option_id = ?", id, option.ID).
+			Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		option.Count = count
+	}
 	return pool, err
 }
 

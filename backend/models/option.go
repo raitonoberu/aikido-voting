@@ -9,5 +9,5 @@ type Option struct {
 	PoolID int64  `json:"-"`
 	Text   string `json:"text"`
 
-	Count int64 `json:"count" bun:"-"`
+	Count int `json:"count" bun:"-"`
 }
