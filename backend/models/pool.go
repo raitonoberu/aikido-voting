@@ -20,7 +20,7 @@ type Pool struct {
 	Description string    `json:"description"`
 	IsAnonymous bool      `json:"is_anonymous"`
 	CreatedAt   time.Time `json:"created_at"`
-	ExpiresdAt  time.Time `json:"expires_at"`
+	ExpiresAt   time.Time `json:"expires_at"`
 
 	Vote int64 `json:"vote" bun:"-"`
 
@@ -48,7 +48,7 @@ func (m PoolModel) Create(ctx context.Context, userID int64, form forms.CreatePo
 		Description: form.Description,
 		IsAnonymous: *form.IsAnonymous,
 		CreatedAt:   time.Now(),
-		ExpiresdAt:  time.Now().Add(time.Hour * time.Duration(form.OpenFor)),
+		ExpiresAt:   time.Now().Add(time.Hour * time.Duration(form.OpenFor)),
 	}
 	_, err = tx.NewInsert().
 		Model(pool).
@@ -126,14 +126,14 @@ func (m PoolModel) Available(ctx context.Context, userID int64) ([]*Pool, error)
 	}
 
 	// get pools
-	var pool []*Pool
+	pools := []*Pool{}
 	err = db.GetDB().NewSelect().
-		Model(&pool).
+		Model(&pools).
 		Where("group_id in (?)", bun.In(groupIDs)).
 		Relation("User").
 		Relation("Options").
 		Scan(ctx)
-	return pool, err
+	return pools, err
 }
 
 func (m PoolModel) Delete(ctx context.Context, id int64) error {
