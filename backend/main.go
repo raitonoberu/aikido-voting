@@ -18,13 +18,15 @@ func main() {
 	// validator
 	binding.Validator = new(forms.DefaultValidator)
 
-	// api
-	r := gin.Default()
-	api := r.Group("/api")
+	// router
+	router := gin.Default()
 
 	// cors
 	cors := new(controllers.CorsController)
-	api.Use(cors.Middleware)
+	router.Use(cors.Middleware)
+
+	// api
+	api := router.Group("/api")
 
 	// auth
 	auth := new(controllers.AuthController)
@@ -59,5 +61,5 @@ func main() {
 	api.POST("/group/:id/user", auth.Middleware, group.Add)
 	api.DELETE("/group/:id/user/:user_id", auth.Middleware, group.Remove)
 
-	panic(r.Run(":8080"))
+	panic(router.Run(":8080"))
 }
