@@ -6,17 +6,17 @@ WORKDIR /app
 RUN go build -o main . 
 
 # build frontend
-# FROM node:18 AS front
-# RUN mkdir /app
-# COPY frontend/ /app/
-# WORKDIR /app
-# RUN npm install
-# RUN npm run build
+FROM docker.io/node:alpine AS front
+RUN mkdir /app
+COPY frontend/ /app/
+WORKDIR /app
+RUN npm install
+RUN npm run build
 
 # deploy
 FROM scratch
 WORKDIR /
 COPY --from=back /app/main main
-# COPY --from=front /app/build/ static/
+COPY --from=front /app/build/ static
 
 ENTRYPOINT [ "/main" ]

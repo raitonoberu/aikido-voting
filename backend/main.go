@@ -6,6 +6,7 @@ import (
 	"aikido/db/relations"
 	"aikido/forms"
 
+	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 )
@@ -20,6 +21,9 @@ func main() {
 
 	// router
 	router := gin.Default()
+
+	// static
+	router.Use(static.ServeRoot("/", "static"))
 
 	// cors
 	cors := new(controllers.CorsController)
