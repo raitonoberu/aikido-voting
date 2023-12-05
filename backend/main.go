@@ -5,6 +5,7 @@ import (
 	"aikido/db"
 	"aikido/db/relations"
 	"aikido/forms"
+	"strings"
 
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
@@ -23,7 +24,12 @@ func main() {
 	router := gin.Default()
 
 	// static
-	router.Use(static.ServeRoot("/", "static"))
+	router.Use(static.Serve("/", static.LocalFile("static", true)))
+	router.NoRoute(func(c *gin.Context) {
+		if !strings.HasPrefix(c.Request.RequestURI, "/api") {
+			c.File("static/index.html")
+		}
+	})
 
 	// cors
 	cors := new(controllers.CorsController)
