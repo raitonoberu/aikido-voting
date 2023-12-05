@@ -37,6 +37,10 @@ func (m ChatModel) WriteMessage(ctx context.Context, userID, groupID int64, form
 		return errors.New("group doesn't exist")
 	}
 
+	if !userGroupModel.Exists(ctx, userID, groupID) {
+		return errors.New("you can't write to this chat")
+	}
+
 	// insert message
 	message := &Message{
 		UserID:    userID,
@@ -52,22 +56,12 @@ func (m ChatModel) WriteMessage(ctx context.Context, userID, groupID int64, form
 }
 
 func (m ChatModel) ReadMessages(ctx context.Context, userID, groupID int64, count, offset int) ([]*Message, error) {
-	// check if user is in group
-	exists, err := db.GetDB().NewSelect().
-		Model((*UserGroup)(nil)).
-		Where("user_id = ? AND group_id = ?", userID, groupID).
-		Exists(ctx)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		// TODO: handle admin?
+	if !userGroupModel.Exists(ctx, userID, groupID) {
 		return nil, errors.New("you can't read this chat")
 	}
 
-	// select last messages
 	messages := []*Message{}
-	err = db.GetDB().NewSelect().
+	return messages, db.GetDB().NewSelect().
 		Model(&messages).
 		Where("group_id = ?", groupID).
 		Relation("User").
@@ -75,6 +69,5 @@ func (m ChatModel) ReadMessages(ctx context.Context, userID, groupID int64, coun
 		Offset(offset).
 		Order("created_at DESC").
 		Scan(ctx)
-	return messages, err
 
 }

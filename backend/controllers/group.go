@@ -34,7 +34,7 @@ func (c *GroupController) Create(ctx *gin.Context) {
 		return
 	}
 
-	groupID, err := groupModel.Create(ctx, form)
+	groupID, err := groupModel.Create(ctx, getUserID(ctx), form)
 	if err != nil {
 		log.Println(err)
 		ctx.AbortWithStatusJSON(500, gin.H{"error": err.Error()})
@@ -60,7 +60,7 @@ func (c *GroupController) Update(ctx *gin.Context) {
 		return
 	}
 
-	err = groupModel.Update(ctx, id, form)
+	err = groupModel.Update(ctx, id, getUserID(ctx), form)
 	if err != nil {
 		log.Println(err)
 		ctx.AbortWithStatusJSON(500, gin.H{"error": err.Error()})
@@ -77,7 +77,7 @@ func (c *GroupController) Delete(ctx *gin.Context) {
 		return
 	}
 
-	err = groupModel.Delete(ctx, id)
+	err = groupModel.Delete(ctx, getUserID(ctx), id)
 	if err != nil {
 		log.Println(err)
 		ctx.AbortWithStatusJSON(500, gin.H{"error": err.Error()})
@@ -118,7 +118,7 @@ func (c *GroupController) Add(ctx *gin.Context) {
 		return
 	}
 
-	err = userGroupModel.Add(ctx, getUserID(ctx), id)
+	err = userGroupModel.Add(ctx, getUserID(ctx), id, form)
 	if err != nil {
 		log.Println(err)
 		ctx.AbortWithStatusJSON(500, gin.H{"error": err.Error()})
@@ -141,7 +141,7 @@ func (c *GroupController) Remove(ctx *gin.Context) {
 		return
 	}
 
-	err = userGroupModel.Remove(ctx, userID, groupID)
+	err = userGroupModel.Remove(ctx, getUserID(ctx), userID, groupID)
 	if err != nil {
 		log.Println(err)
 		ctx.AbortWithStatusJSON(500, gin.H{"error": err.Error()})

@@ -59,8 +59,6 @@ func (c *PoolController) Get(ctx *gin.Context) {
 		return
 	}
 
-	// TODO: check if user is in the group
-
 	ctx.JSON(200, pool)
 }
 
@@ -71,21 +69,7 @@ func (c *PoolController) Delete(ctx *gin.Context) {
 		return
 	}
 
-	// TODO: move this to model
-	//
-	// check if we are the owner
-	// pool, err := poolModel.One(ctx, id)
-	// if err != nil {
-	// 	ctx.AbortWithStatusJSON(500, gin.H{"error": err.Error()})
-	// 	return
-	// }
-	// if pool.UserID != getUserID(ctx) {
-	// 	ctx.AbortWithStatusJSON(403, gin.H{"error": "forbidden"})
-	// 	return
-	// }
-
-	// delete pool
-	err = poolModel.Delete(ctx, id)
+	err = poolModel.Delete(ctx, getUserID(ctx), id)
 	if err != nil {
 		log.Println(err)
 		ctx.AbortWithStatusJSON(500, gin.H{"error": err.Error()})

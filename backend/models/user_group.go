@@ -2,6 +2,7 @@ package models
 
 import (
 	"aikido/db"
+	"aikido/forms"
 	"context"
 	"errors"
 
@@ -20,8 +21,10 @@ type UserGroup struct {
 
 type UserGroupModel struct{}
 
-func (m UserGroupModel) Add(ctx context.Context, userID, groupID int64) error {
-	// TODO: limit to admin only
+func (m UserGroupModel) Add(ctx context.Context, userID, groupID int64, form forms.AddUserForm) error {
+	if !m.Exists(ctx, userID, 1) {
+		return errors.New("you can't add users to groups")
+	}
 	db := db.GetDB()
 
 	// check if group exists
@@ -38,7 +41,7 @@ func (m UserGroupModel) Add(ctx context.Context, userID, groupID int64) error {
 
 	// insert userGroup
 	userGroup := &UserGroup{
-		UserID:  userID,
+		UserID:  form.ID,
 		GroupID: groupID,
 	}
 	_, err = db.NewInsert().
@@ -47,8 +50,14 @@ func (m UserGroupModel) Add(ctx context.Context, userID, groupID int64) error {
 	return err
 }
 
-func (m UserGroupModel) Remove(ctx context.Context, userID, groupID int64) error {
-	// TODO: limit to admin only
+func (m UserGroupModel) Remove(ctx context.Context, curUserID, userID, groupID int64) error {
+	if !m.Exists(ctx, curUserID, 1) {
+		return errors.New("you can't remove users from groups")
+	}
+	if groupID == 1 && userID == 1 {
+		return errors.New("this admin can't be removed")
+	}
+
 	_, err := db.GetDB().NewDelete().
 		Model((*UserGroup)(nil)).
 		Where("user_id = ? AND group_id = ?", userID, groupID).
@@ -72,4 +81,12 @@ func (m UserGroupModel) ByGroup(ctx context.Context, groupID int64) ([]*UserGrou
 		Where("group_id = ?", groupID).
 		Scan(ctx)
 	return groups, err
+}
+
+func (m UserGroupModel) Exists(ctx context.Context, userID int64, groupID int64) bool {
+	exists, _ := db.GetDB().NewSelect().
+		Model((*UserGroup)(nil)).
+		Where("user_id = ? AND group_id = ?", userID, groupID).
+		Exists(ctx)
+	return exists
 }

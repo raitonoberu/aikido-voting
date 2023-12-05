@@ -4,6 +4,7 @@ import (
 	"aikido/db"
 	"aikido/forms"
 	"context"
+	"errors"
 
 	"github.com/uptrace/bun"
 )
@@ -27,8 +28,11 @@ func (m GroupModel) All(ctx context.Context) ([]*Group, error) {
 	return groups, err
 }
 
-func (m GroupModel) Create(ctx context.Context, form forms.CreateGroupForm) (int64, error) {
-	// TODO: limit to admin only
+func (m GroupModel) Create(ctx context.Context, userID int64, form forms.CreateGroupForm) (int64, error) {
+	if !userGroupModel.Exists(ctx, userID, 1) {
+		return 0, errors.New("you can't create groups")
+	}
+
 	group := &Group{
 		Name: form.Name,
 	}
@@ -38,8 +42,14 @@ func (m GroupModel) Create(ctx context.Context, form forms.CreateGroupForm) (int
 	return group.ID, err
 }
 
-func (m GroupModel) Delete(ctx context.Context, id int64) error {
-	// TODO: limit to admin only
+func (m GroupModel) Delete(ctx context.Context, userID, id int64) error {
+	if !userGroupModel.Exists(ctx, userID, 1) {
+		return errors.New("you can't delete groups")
+	}
+	if id <= 2 {
+		return errors.New("default groups can't be deleted")
+	}
+
 	_, err := db.GetDB().NewDelete().
 		Model((*Group)(nil)).
 		Where("id = ?", id).
@@ -47,8 +57,14 @@ func (m GroupModel) Delete(ctx context.Context, id int64) error {
 	return err
 }
 
-func (m GroupModel) Update(ctx context.Context, id int64, form forms.UpdateGroupForm) error {
-	// TODO: limit to admin only
+func (m GroupModel) Update(ctx context.Context, userID, id int64, form forms.UpdateGroupForm) error {
+	if !userGroupModel.Exists(ctx, userID, 1) {
+		return errors.New("you can't update groups")
+	}
+	if id <= 2 {
+		return errors.New("default groups can't be updated")
+	}
+
 	_, err := db.GetDB().NewUpdate().
 		Model((*Group)(nil)).
 		Where("id = ?", id).

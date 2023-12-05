@@ -5,6 +5,7 @@ import (
 	"aikido/forms"
 	"context"
 	"database/sql"
+	"errors"
 	"time"
 
 	"github.com/uptrace/bun"
@@ -34,6 +35,10 @@ type PoolModel struct{}
 var userGroupModel = new(UserGroupModel)
 
 func (m PoolModel) Create(ctx context.Context, userID int64, form forms.CreatePoolForm) (int64, error) {
+	if !userGroupModel.Exists(ctx, userID, 1) {
+		return 0, errors.New("you can't create pools")
+	}
+
 	tx, err := db.GetDB().BeginTx(ctx, &sql.TxOptions{})
 	if err != nil {
 		return 0, err
@@ -136,7 +141,11 @@ func (m PoolModel) Available(ctx context.Context, userID int64) ([]*Pool, error)
 	return pools, err
 }
 
-func (m PoolModel) Delete(ctx context.Context, id int64) error {
+func (m PoolModel) Delete(ctx context.Context, userID int64, id int64) error {
+	if !userGroupModel.Exists(ctx, userID, 1) {
+		return errors.New("you can't delete pools")
+	}
+
 	tx, err := db.GetDB().Begin()
 	if err != nil {
 		return err
