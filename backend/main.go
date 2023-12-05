@@ -71,5 +71,10 @@ func main() {
 	api.POST("/group/:id/user", auth.Middleware, group.Add)
 	api.DELETE("/group/:id/user/:user_id", auth.Middleware, group.Remove)
 
+	// chat
+	chat := new(controllers.ChatController)
+	api.POST("/chat/:id", auth.Middleware, chat.WriteMessage)
+	api.GET("/chat/:id", auth.Middleware, chat.ReadMessages)
+
 	panic(router.Run(":8080"))
 }

@@ -26,6 +26,7 @@ func Create() error {
 		(*models.Group)(nil),
 		(*models.UserGroup)(nil),
 		(*models.Vote)(nil),
+		(*models.Message)(nil),
 	} {
 		_, err := tx.NewCreateTable().
 			IfNotExists().

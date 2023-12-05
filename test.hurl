@@ -303,3 +303,32 @@ Authorization: Bearer {{token}}
 HTTP 200
 [Asserts]
 jsonpath "$" count == {{users_count}}
+
+
+# -- CHAT --
+
+## Write message
+POST http://localhost:8080/api/group/{{group_id}}/user
+Authorization: Bearer {{token}}
+{
+	"id": {{user_id}}
+}
+
+HTTP 200
+
+POST http://localhost:8080/api/chat/{{group_id}}
+Authorization: Bearer {{token}}
+{
+	"text": "Testing Testing"
+}
+
+HTTP 200
+
+
+## Get messages
+GET http://localhost:8080/api/chat/{{group_id}}
+Authorization: Bearer {{token}}
+
+HTTP 200
+[Asserts]
+jsonpath "$[0]['text']" == "Testing Testing"
