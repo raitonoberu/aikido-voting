@@ -15,7 +15,9 @@ import (
 func main() {
 	// db
 	db.Init()
-	relations.Create()
+	if err := relations.Create(); err != nil {
+		panic(err)
+	}
 
 	// validator
 	binding.Validator = new(forms.DefaultValidator)
