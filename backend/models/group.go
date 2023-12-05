@@ -50,11 +50,30 @@ func (m GroupModel) Delete(ctx context.Context, userID, id int64) error {
 		return errors.New("default groups can't be deleted")
 	}
 
-	_, err := db.GetDB().NewDelete().
+	tx, err := db.GetDB().Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// delete all userGroups
+	_, err = tx.NewDelete().
+		Model((*UserGroup)(nil)).
+		Where("group_id = ?", id).
+		Exec(ctx)
+	if err != nil {
+		return err
+	}
+
+	// delete group
+	_, err = tx.NewDelete().
 		Model((*Group)(nil)).
 		Where("id = ?", id).
 		Exec(ctx)
-	return err
+	if err != nil {
+		return err
+	}
+	return tx.Commit()
 }
 
 func (m GroupModel) Update(ctx context.Context, userID, id int64, form forms.UpdateGroupForm) error {
