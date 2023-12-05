@@ -32,7 +32,7 @@ Response body:
 	"groups": [
 		{
 			"id": 1,
-			"name": "Администраторы",
+			"name": "Преподаватели",
 		},
 		// ...
 	],
@@ -160,6 +160,20 @@ Request body:
 
 - **DELETE** `/pool/{id}/vote` - отменить голос.
 
+- **GET** `/pool/{pool_id}/vote/{option_id}` - получить пользователей, проголосовавших за вариант.
+
+Response body:
+```json
+[
+	{
+		"id": 1,
+		"name": "Фамилия Имя Отчество",
+		"email": "lussypicker@mail.ru",
+	},
+	// ...
+]
+```
+
 ## Group
 
 -- **GET** `/group` - получить все существующие группы.
@@ -169,7 +183,7 @@ Response body:
 [
 	{
 		"id": 1,
-		"name": "Администраторы",
+		"name": "Преподаватели",
 	},
 	{
 		"id": 2,
