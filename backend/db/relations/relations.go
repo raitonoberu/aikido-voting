@@ -88,5 +88,9 @@ func Create() error {
 		return err
 	}
 
+	// https://stackoverflow.com/questions/9108833/postgres-autoincrement-not-updated-on-explicit-id-inserts
+	tx.NewRaw(`SELECT setval('groups_id_seq', (SELECT MAX(id) from "groups"))`).Exec(ctx)
+	tx.NewRaw(`SELECT setval('users_id_seq', (SELECT MAX(id) from "users"))`).Exec(ctx)
+
 	return tx.Commit()
 }

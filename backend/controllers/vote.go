@@ -38,6 +38,29 @@ func (c *VoteController) Create(ctx *gin.Context) {
 	ctx.Status(200)
 }
 
+func (c *VoteController) VotedUsers(ctx *gin.Context) {
+	poolID, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+	if poolID == 0 || err != nil {
+		ctx.AbortWithStatusJSON(400, gin.H{"error": "invalid parameter"})
+		return
+	}
+
+	optionID, err := strconv.ParseInt(ctx.Param("option_id"), 10, 64)
+	if optionID == 0 || err != nil {
+		ctx.AbortWithStatusJSON(400, gin.H{"error": "invalid parameter"})
+		return
+	}
+
+	users, err := voteModel.VotedUsers(ctx, poolID, optionID)
+	if err != nil {
+		log.Println(err)
+		ctx.AbortWithStatusJSON(500, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(200, users)
+}
+
 func (c *VoteController) Delete(ctx *gin.Context) {
 	poolID, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 	if poolID == 0 || err != nil {

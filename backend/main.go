@@ -62,6 +62,7 @@ func main() {
 	vote := new(controllers.VoteController)
 	api.POST("/pool/:id/vote", auth.Middleware, vote.Create)
 	api.DELETE("/pool/:id/vote", auth.Middleware, vote.Delete)
+	api.GET("/pool/:id/vote/:option_id", auth.Middleware, vote.VotedUsers)
 
 	// group
 	group := new(controllers.GroupController)
