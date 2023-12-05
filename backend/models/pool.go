@@ -137,6 +137,7 @@ func (m PoolModel) Available(ctx context.Context, userID int64) ([]*Pool, error)
 		Where("group_id in (?)", bun.In(groupIDs)).
 		Relation("User").
 		Relation("Options").
+		Order("created_at DESC").
 		Scan(ctx)
 	return pools, err
 }
