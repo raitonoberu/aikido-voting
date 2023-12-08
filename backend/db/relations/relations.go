@@ -72,6 +72,10 @@ func Create() error {
 		UserID:  1,
 		GroupID: 1,
 	}
+	ug1 := &models.UserGroup{
+		UserID:  1,
+		GroupID: 2,
+	}
 
 	_, err = tx.NewInsert().
 		Model(u).
@@ -82,6 +86,13 @@ func Create() error {
 	}
 	_, err = tx.NewInsert().
 		Model(ug).
+		On("conflict (user_id, group_id) do nothing").
+		Exec(ctx)
+	if err != nil {
+		return err
+	}
+	_, err = tx.NewInsert().
+		Model(ug1).
 		On("conflict (user_id, group_id) do nothing").
 		Exec(ctx)
 	if err != nil {
