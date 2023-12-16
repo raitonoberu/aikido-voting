@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/gin-contrib/static"
+	"github.com/gin-gonic/autotls"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 )
@@ -79,5 +80,5 @@ func main() {
 	api.POST("/chat/:id", auth.Middleware, chat.WriteMessage)
 	api.GET("/chat/:id", auth.Middleware, chat.ReadMessages)
 
-	panic(router.Run(":8080"))
+	panic(autotls.Run(router, "web-portfolio.tech"))
 }
