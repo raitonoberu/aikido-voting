@@ -45,6 +45,22 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
 
+  bot:
+    container_name: bot
+    build: bot
+    depends_on:
+      - web
+    environment:
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      VK_TOKEN: ${VK_TOKEN}
+      VK_GROUPID: ${VK_GROUPID}
+      TG_TOKEN: ${TG_TOKEN}
+      TG_CHATID: ${TG_CHATID}
+    restart: always
+    cap_add:
+      - NET_RAW
+
 networks:
   bridge:
     driver: bridge
