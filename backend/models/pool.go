@@ -25,8 +25,8 @@ type Pool struct {
 
 	Vote int64 `json:"vote" bun:"-"`
 
-	User *User `json:"user" bun:"rel:belongs-to,join:user_id=id"`
-	// Group   *Group    `json:"group" bun:"rel:belongs-to,join:group_id=id"`
+	User  *User       `json:"user" bun:"rel:belongs-to,join:user_id=id"`
+	Group *Group      `json:"group" bun:"rel:belongs-to,join:group_id=id"`
 	Options []*Option `json:"options" bun:"rel:has-many,join:id=pool_id"`
 }
 
@@ -85,6 +85,7 @@ func (m PoolModel) Get(ctx context.Context, userID, id int64) (*Pool, error) {
 		Model(pool).
 		Where("p.id = ?", id).
 		Relation("User").
+		Relation("Group").
 		Relation("Options").
 		Limit(1).
 		Scan(ctx)
@@ -136,6 +137,7 @@ func (m PoolModel) Available(ctx context.Context, userID int64) ([]*Pool, error)
 		Model(&pools).
 		Where("group_id in (?)", bun.In(groupIDs)).
 		Relation("User").
+		Relation("Group").
 		Relation("Options").
 		Order("created_at DESC").
 		Scan(ctx)
