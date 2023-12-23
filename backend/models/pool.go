@@ -25,8 +25,8 @@ type Pool struct {
 
 	Vote int64 `json:"vote" bun:"-"`
 
-	User  *User       `json:"user" bun:"rel:belongs-to,join:user_id=id"`
-	Group *Group      `json:"group" bun:"rel:belongs-to,join:group_id=id"`
+	User    *User     `json:"user" bun:"rel:belongs-to,join:user_id=id"`
+	Group   *Group    `json:"group" bun:"rel:belongs-to,join:group_id=id"`
 	Options []*Option `json:"options" bun:"rel:has-many,join:id=pool_id"`
 }
 
@@ -141,7 +141,24 @@ func (m PoolModel) Available(ctx context.Context, userID int64) ([]*Pool, error)
 		Relation("Options").
 		Order("created_at DESC").
 		Scan(ctx)
-	return pools, err
+	if err != nil {
+		return nil, err
+	}
+
+	// temporary solution
+	for _, pool := range pools {
+		for _, option := range pool.Options {
+			count, err := db.GetDB().NewSelect().
+				Model((*Vote)(nil)).
+				Where("pool_id = ? AND option_id = ?", pool.ID, option.ID).
+				Count(ctx)
+			if err != nil && err != sql.ErrNoRows {
+				return nil, err
+			}
+			option.Count = count
+		}
+	}
+	return pools, nil
 }
 
 func (m PoolModel) Delete(ctx context.Context, userID int64, id int64) error {
