@@ -39,6 +39,18 @@ func (m PoolModel) Create(ctx context.Context, userID int64, form forms.CreatePo
 		return 0, errors.New("you can't create pools")
 	}
 
+	// check if group exists
+	groupExists, err := db.GetDB().NewSelect().
+		Model((*Group)(nil)).
+		Where("id = ?", form.GroupID).
+		Exists(ctx)
+	if err != nil {
+		return 0, err
+	}
+	if !groupExists {
+		return 0, errors.New("group doesn't exist")
+	}
+
 	tx, err := db.GetDB().BeginTx(ctx, &sql.TxOptions{})
 	if err != nil {
 		return 0, err
