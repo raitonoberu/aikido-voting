@@ -23,7 +23,7 @@ type Pool struct {
 	CreatedAt   time.Time `json:"created_at"`
 	ExpiresAt   time.Time `json:"expires_at"`
 
-	Vote int64 `json:"vote,omitempty" bun:"-"`
+	Vote int64 `json:"vote" bun:"-"`
 
 	User    *User     `json:"user,omitempty" bun:"rel:belongs-to,join:user_id=id"`
 	Group   *Group    `json:"group,omitempty" bun:"rel:belongs-to,join:group_id=id"`
