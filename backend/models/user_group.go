@@ -30,7 +30,7 @@ func (m UserGroupModel) Add(ctx context.Context, userID, groupID int64, form for
 	// check if user exists
 	userExists, err := db.NewSelect().
 		Model((*User)(nil)).
-		Where("id = ?", userID).
+		Where("id = ?", form.ID).
 		Exists(ctx)
 	if err != nil {
 		return err
