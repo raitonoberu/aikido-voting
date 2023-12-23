@@ -27,6 +27,18 @@ func (m UserGroupModel) Add(ctx context.Context, userID, groupID int64, form for
 	}
 	db := db.GetDB()
 
+	// check if user exists
+	userExists, err := db.NewSelect().
+		Model((*User)(nil)).
+		Where("id = ?", userID).
+		Exists(ctx)
+	if err != nil {
+		return err
+	}
+	if !userExists {
+		return errors.New("user doesn't exist")
+	}
+
 	// check if group exists
 	groupExists, err := db.NewSelect().
 		Model((*Group)(nil)).
