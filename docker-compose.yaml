@@ -22,6 +22,8 @@ services:
     restart: always
     cap_add:
       - NET_RAW
+    volumes:
+      - cache:/cache
 
   db:
     container_name: postgres
@@ -67,3 +69,4 @@ networks:
 
 volumes:
   postgres:
+  cache:

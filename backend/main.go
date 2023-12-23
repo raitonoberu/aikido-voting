@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/autotls"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"golang.org/x/crypto/acme/autocert"
 )
 
 func main() {
@@ -81,5 +82,11 @@ func main() {
 	api.POST("/chat/:id", auth.Middleware, chat.WriteMessage)
 	api.GET("/chat/:id", auth.Middleware, chat.ReadMessages)
 
-	panic(autotls.Run(router, "web-portfolio.tech"))
+	panic(
+		autotls.RunWithManager(router, &autocert.Manager{
+			Prompt:     autocert.AcceptTOS,
+			HostPolicy: autocert.HostWhitelist("web-portfolio.tech"),
+			Cache:      autocert.DirCache("/cache"),
+		}),
+	)
 }
