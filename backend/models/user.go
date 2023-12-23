@@ -205,6 +205,15 @@ func (m UserModel) Delete(ctx context.Context, id int64) error {
 		return err
 	}
 
+	// delete user votes
+	_, err = tx.NewDelete().
+		Model((*Vote)(nil)).
+		Where("user_id = ?", id).
+		Exec(ctx)
+	if err != nil {
+		return err
+	}
+
 	// delete user
 	_, err = tx.NewDelete().
 		Model((*User)(nil)).
