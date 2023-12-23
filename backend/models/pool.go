@@ -23,11 +23,11 @@ type Pool struct {
 	CreatedAt   time.Time `json:"created_at"`
 	ExpiresAt   time.Time `json:"expires_at"`
 
-	Vote int64 `json:"vote" bun:"-"`
+	Vote int64 `json:"vote,omitempty" bun:"-"`
 
-	User    *User     `json:"user" bun:"rel:belongs-to,join:user_id=id"`
-	Group   *Group    `json:"group" bun:"rel:belongs-to,join:group_id=id"`
-	Options []*Option `json:"options" bun:"rel:has-many,join:id=pool_id"`
+	User    *User     `json:"user,omitempty" bun:"rel:belongs-to,join:user_id=id"`
+	Group   *Group    `json:"group,omitempty" bun:"rel:belongs-to,join:group_id=id"`
+	Options []*Option `json:"options,omitempty" bun:"rel:has-many,join:id=pool_id"`
 }
 
 type PoolModel struct{}
@@ -159,6 +159,16 @@ func (m PoolModel) Available(ctx context.Context, userID int64) ([]*Pool, error)
 		}
 	}
 	return pools, nil
+}
+
+func (m PoolModel) All(ctx context.Context) ([]*Pool, error) {
+	pools := []*Pool{}
+	err := db.GetDB().NewSelect().
+		Model(&pools).
+		Relation("Group").
+		Order("created_at DESC").
+		Scan(ctx)
+	return pools, err
 }
 
 func (m PoolModel) Delete(ctx context.Context, userID int64, id int64) error {

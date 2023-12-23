@@ -56,6 +56,7 @@ func main() {
 	pool := new(controllers.PoolController)
 	api.POST("/pool", auth.Middleware, pool.Create)
 	api.GET("/pool", auth.Middleware, pool.Available)
+	api.GET("/pool/all", auth.Middleware, pool.All)
 	api.GET("/pool/:id", auth.Middleware, pool.Get)
 	api.DELETE("/pool/:id", auth.Middleware, pool.Delete)
 

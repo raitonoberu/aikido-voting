@@ -24,7 +24,7 @@ class Service(object):
             self.login()
 
         resp = requests.get(
-            self.API_BASE + "/pool",
+            self.API_BASE + "/pool/all",
             headers={"Authorization": "Bearer " + self.token},
         ).json()
         if "error" in resp:

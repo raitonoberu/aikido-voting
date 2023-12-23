@@ -45,6 +45,17 @@ func (c *PoolController) Available(ctx *gin.Context) {
 	ctx.JSON(200, pools)
 }
 
+func (c *PoolController) All(ctx *gin.Context) {
+	pools, err := poolModel.All(ctx)
+	if err != nil {
+		log.Println(err)
+		ctx.AbortWithStatusJSON(500, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(200, pools)
+}
+
 func (c *PoolController) Get(ctx *gin.Context) {
 	id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 	if id == 0 || err != nil {
