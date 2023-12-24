@@ -1,6 +1,6 @@
 # Aikido Voting
 
-A module for making group decisions on the Aikido Portal, still very much a work in progress.
+A module for making group decisions on the Aikido Portal.
 
 ## Description
 
