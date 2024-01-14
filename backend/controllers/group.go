@@ -60,7 +60,7 @@ func (c *GroupController) Update(ctx *gin.Context) {
 		return
 	}
 
-	err = groupModel.Update(ctx, id, getUserID(ctx), form)
+	err = groupModel.Update(ctx, getUserID(ctx), id, form)
 	if err != nil {
 		log.Println(err)
 		ctx.AbortWithStatusJSON(500, gin.H{"error": err.Error()})
